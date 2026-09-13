@@ -1,7 +1,10 @@
-name: Lab testing on push
+name: Lab testing
 
 on:
   push:
+    branches:
+      - master
+  pull_request:
   workflow_dispatch:
     inputs:
       run-optional-cg:

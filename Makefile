@@ -197,13 +197,13 @@ $(addprefix format-,$(labs)): format-%: check-clang-format
 		python3 .github/cg/scripts/format/check-comments.py "--check" $(files_all); \
 		python3 .github/cg/scripts/format/check-std-spaces.py "--check" $(files_all); \
 		python3 .github/cg/scripts/format/check-alias-length.py "--check" $(files_all); \
-		$(LATEST_CLANG_FORMAT) -style=file:.clang-format -n $(files_all); \
+		$(LATEST_CLANG_FORMAT) -style=file:.clang-format -n -Werror $(files_all) || true; \
 	fi
 	@if [ $(fix) = 1 ]; then \
 		echo "[FORMAT] fix files"; \
 		python3 .github/cg/scripts/format/check-comments.py "--fix" $(files_all); \
 		python3 .github/cg/scripts/format/check-std-spaces.py "--fix" $(files_all); \
-		$(LATEST_CLANG_FORMAT) -style=file:.clang-format -i $(files_all); \
+		$(LATEST_CLANG_FORMAT) -style=file:.clang-format -i -Werror $(files_all) || true; \
 	fi
 
 	@rm -f .clang-format
@@ -252,8 +252,9 @@ $(addprefix tidy-,$(labs)): tidy-%: check-clang-tidy
 			$(tidy_write) $(tidy_general) $(tidy_camel) $(tidy_lower) $(files_all); \
 		echo "[TIDY] check files"; \
 		$(LATEST_CLANG_TIDY) --config-file=.clang-tidy -header-filter='.*' --warnings-as-errors='*' --quiet $(files_all); \
+		python3 .github/cg/scripts/tidy/check-header-guard.py "--check" $(files_all) || true; \
 	fi
 
-	@rm -f .clang-tidy;
+	@rm -f .clang-tidy
 
 include $(wildcard $(patsubst %.o,%.d,$(objects) $(test_objects)))

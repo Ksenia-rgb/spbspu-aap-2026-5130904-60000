@@ -210,7 +210,7 @@ $(addprefix format-,$(labs)): format-%: check-clang-format
 
 check-clang-tidy:
 	$(eval LATEST_CLANG_TIDY := $(shell \
-    V=$$(clang-tidy --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+' | head -1 | cut -d. -f1); \
+    V=$$(clang-tidy --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 | cut -d. -f1); \
     if [ -n "$$V" ] && [ $$V -ge $(CLANG_TIDY_MIN) ]; then \
       echo "clang-tidy"; \
     else \
